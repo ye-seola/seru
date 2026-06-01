@@ -81,7 +81,7 @@ fn apply_box_preset(name: &str, style: &mut BoxStyle) {
         }
         "Box" => {
             style.direction.get_or_insert(BoxDirection::Column);
-            // style.main.get_or_insert(MainAlign::Start);
+            style.main.get_or_insert(MainAlign::Start);
             style.cross.get_or_insert(CrossAlign::Stretch);
         }
         _ => {}

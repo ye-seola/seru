@@ -5,7 +5,6 @@ edition = "2024"
 
 [dependencies]
 anyhow = { version = "1.0", features = ["backtrace"] }
-lipsum = "0.9.1"
 logos = "0.16.1"
 skia-safe = { version = "0.97.2", features = ["textlayout"] }
 taffy = "0.10.1"

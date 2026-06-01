@@ -1,0 +1,50 @@
+component PollOption(label, value, fill):
+    Stack(width="100%", height=64, radius=16, background="#eeeeee", place_x="start")[
+        Box(width="${value}%", height="100%", background=fill, radius=16)[]
+        Row(
+            width="100%",
+            height="100%",
+            padding="0 26",
+            main="between",
+            cross="center"
+        )[
+            Text(text=label, font_size=24, font_weight="medium", color="#111111")
+            Text(text="${value}%", font_size=22, color="#111111")
+        ]
+    ]
+
+component Main():
+    Center(width="100%", height="100%", background="#ffffff", gap=28, padding=16)[
+        Column(width="100%", gap=20)[
+            PollOption(
+                label="1",
+                value=54,
+                fill="#d8d0fb"
+            )
+
+            PollOption(
+                label="2",
+                value=38,
+                fill="#7c35e8",
+            )
+
+            PollOption(
+                label="3",
+                value=8,
+                fill="#d8d0fb"
+            )
+
+            PollOption(
+                label="4",
+                value=0,
+                fill="#d8d0fb"
+            )
+        ]
+
+        Text(
+            text="정답률 38%",
+            font_size=20,
+            font_weight="bold",
+            color="#111111"
+        )
+    ]

@@ -166,7 +166,7 @@ impl<'s> Parser<'s> {
             Token::If => Ok(ast::ChildNode::If(self.parse_if_node()?)),
             Token::For => Ok(ast::ChildNode::For(self.parse_for_node()?)),
             Token::Identifier(_) => Ok(ast::ChildNode::ComponentCall(self.parse_component_call()?)),
-            _ => unreachable!(),
+            tok => anyhow::bail!("expect node but {:?}", tok),
         }
     }
 

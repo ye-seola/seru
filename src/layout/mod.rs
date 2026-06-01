@@ -91,7 +91,7 @@ fn measure(
 
             match available_space.width {
                 AvailableSpace::Definite(_) => Size {
-                    width: paragraph.max_width().ceil().min(width),
+                    width: paragraph.longest_line().ceil().min(width),
                     height: paragraph.height().min(height),
                 },
                 AvailableSpace::MinContent => Size {

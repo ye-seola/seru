@@ -72,6 +72,17 @@ impl Runtime {
         validate_component_args(&component, &args)?;
 
         let scope = env::Scope::new_child(scope);
+        for decl in component
+            .arg_declarations
+            .iter()
+            .filter(|a| a.default.is_some())
+        {
+            let expr = decl.default.clone().unwrap();
+            let default = self.eval_expr(&expr, &self.root_scope)?;
+
+            scope.borrow_mut().set(&decl.name, default);
+        }
+
         for (name, value) in args {
             scope.borrow_mut().set(&name, value.clone());
         }

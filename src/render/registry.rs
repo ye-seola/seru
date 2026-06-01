@@ -52,7 +52,7 @@ impl NativeComponentRegistry {
             NativeComponent::new("Column", components::box_func),
             NativeComponent::new("Center", components::box_func),
             NativeComponent::new("Row", components::box_func),
-            NativeComponent::new("Stack", components::box_func),
+            NativeComponent::new("Stack", components::stack_func),
             NativeComponent::new("Text", components::text_func),
             NativeComponent::new("Image", components::image_func),
         ];

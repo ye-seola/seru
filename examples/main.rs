@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs};
+use std::{collections::HashMap, env, fs};
 
 use seru::{
     Seru, SeruOption,
@@ -6,10 +6,29 @@ use seru::{
 };
 
 fn main() -> anyhow::Result<()> {
+    let args: Vec<String> = env::args().collect();
+
     let asset_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("examples");
     println!("asset_root: {}", asset_root.display());
 
-    let src = include_str!("simple0.seru");
+    let mut width = 500.0;
+    let mut height = 500.0;
+
+    let seru_path = if args.len() > 1 {
+        args[1].clone()
+    } else {
+        "simple0.seru".to_string()
+    };
+
+    if args.len() > 2 {
+        width = args[2].parse()?;
+    }
+
+    if args.len() > 3 {
+        height = args[3].parse()?;
+    }
+
+    let source = fs::read_to_string(asset_root.join(seru_path))?;
 
     let mut seru = Seru::new_with_options(&SeruOption {
         allow_network_asset: true,
@@ -17,7 +36,7 @@ fn main() -> anyhow::Result<()> {
         load_system_fonts: true,
         fonts: vec![],
     })?;
-    seru.load_str(src)?;
+    seru.load_str(&source)?;
 
     let img = seru.render(
         "Main",
@@ -31,8 +50,8 @@ fn main() -> anyhow::Result<()> {
                 a: 0xFF,
             }),
             render_scale: Some(2.0),
-            width: 320.0,
-            height: 420.0,
+            width: width,
+            height: height,
         },
     )?;
 

@@ -1,0 +1,42 @@
+component Card(top, title, bottom): 
+    Box(
+        width="100%",
+        padding=32,
+        background="#F8FAFC",
+        radius=28
+    )[
+        Column(gap=12)[
+            Text(
+                text=top,
+                font_size=15,
+                font_weight="bold",
+                color="#7C3AED"
+            )
+
+            Text(
+                text=title,
+                font_size=40,
+                font_weight="bold",
+                color="#111827"
+            )
+
+            Text(
+                text=bottom,
+                font_size=17,
+                color="#64748B"
+            )
+        ]
+    ]
+
+
+component Main():
+    Center(
+        width="100%",
+        height="100%",
+        padding=8,
+        background="#0F172A",
+        gap=16
+    )[
+        Card(top="TOP", title="Hello 1", bottom="BOTTOM")
+        Card(top="TOP", title="Hello 2", bottom="BOTTOM")
+    ]

@@ -2,7 +2,7 @@ const GREETING = "Hello "
 
 // zz
 component Main():
-    Center(gap=32)[
+    Center(width="100%", gap=32)[
         Column(
             direction="column",
             main="center",

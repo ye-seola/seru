@@ -3,21 +3,7 @@ use crate::runtime::{Runtime, Value, utils::check_integer};
 impl Runtime {
     pub fn register_builtin_functions(&mut self) {
         self.set("repeat", Value::Func(repeat));
-        self.set("lipsum", Value::Func(lipsum));
     }
-}
-
-fn lipsum(args: Vec<Value>) -> anyhow::Result<Value> {
-    if args.len() != 1 {
-        anyhow::bail!("lipsum required 1 args")
-    }
-
-    let n = args[1].clone().into_number()?;
-    if !check_integer(n) || n < 0.0 {
-        anyhow::bail!("n must be non-negative integer")
-    }
-
-    Ok(Value::String(lipsum::lipsum(n as usize)))
 }
 
 fn repeat(args: Vec<Value>) -> anyhow::Result<Value> {
