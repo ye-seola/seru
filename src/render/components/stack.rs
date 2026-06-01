@@ -4,7 +4,7 @@ use crate::{
 };
 
 pub fn stack_func(
-    name: &str,
+    _name: &str,
     mut args: Args,
     children: Vec<RenderNode>,
     _asset_provider: &dyn AssetProvider,

@@ -43,25 +43,3 @@ impl StackStyle {
         Ok(stack_style)
     }
 }
-
-#[derive(Debug, Clone, Copy)]
-pub enum ImageFit {
-    Cover,
-    Contain,
-    Fill,
-}
-
-impl FromStr for ImageFit {
-    type Err = anyhow::Error;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        let value = value.to_lowercase();
-
-        Ok(match value.as_str() {
-            "cover" => ImageFit::Cover,
-            "contain" => ImageFit::Contain,
-            "fill" => ImageFit::Fill,
-            s => anyhow::bail!("invalid fit: {}", s),
-        })
-    }
-}
