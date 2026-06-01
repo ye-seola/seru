@@ -1,0 +1,44 @@
+const GREETING = "Hello "
+
+// zz
+component Main():
+    Center(gap=32)[
+        Column(
+            direction="column",
+            main="center",
+            border_color="#555555",
+            border=2,
+        )[
+            Column(width="auto") [
+                for(idx, val in ["Hello", "World"]) [
+                    Text(
+                        text="${idx}. ${val}",
+                        color="#0d58a3", 
+                        max_lines=5, 
+                        ellipsis=true, 
+                        max_width=150, 
+                        font_size=16,
+                    )
+                ]
+
+                for(val in ["Pen", "Pine", "Apple", "MacBook"]) [
+                    if(val[0] == "M") [
+                        Text(
+                            text="${val}",
+                            color="#0d58a3", 
+                            max_lines=5, 
+                            ellipsis=true, 
+                            max_width=150, 
+                            font_size=16,
+                        )
+                    ]
+                ]
+            ]
+        ]
+
+        Text(
+            text=repeat(GREETING, 2),
+            font_family="Hellozz",
+            font_weight="bold"
+        )
+    ]

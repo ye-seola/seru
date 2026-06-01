@@ -1,0 +1,20 @@
+[package]
+name = "seru2"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { version = "1.0", features = ["backtrace"] }
+lipsum = "0.9.1"
+logos = "0.16.1"
+skia-safe = { version = "0.97.2", features = ["textlayout"] }
+taffy = "0.10.1"
+ureq = "3.3.0"
+
+[lib]
+name = "seru"
+path = "src/lib.rs"
+
+[features]
+default = []
+webp = ["skia-safe/webp"]

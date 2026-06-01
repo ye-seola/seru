@@ -1,0 +1,23 @@
+component Main():
+    Column(
+        width="100%",
+        height="100%",
+        background="#f5f7fb",
+        padding=24,
+        gap=16
+    )[
+        Box(grow=1, basis=0, min_height=0, background="green") [
+            Text(text=repeat("Hello", 100))
+        ]
+
+        Box(grow=1, basis=0, min_height=0, background="green") [
+            Image(src="img1.png", background="red", width="100%", height="100%", fit="cover")
+        ]
+
+        Box(grow=0.5, basis=0, min_height=0, background="green") [
+            Image(src="img1.png", background="red", width="100%", height="100%")
+        ]
+        Box(grow=0.5, basis=0, min_height=0, background="green") [
+            Image(src="https://r2.etty.dev/bb.jpg", background="red", width="100%", height="100%")
+        ]
+    ]
