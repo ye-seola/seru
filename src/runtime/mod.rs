@@ -46,7 +46,7 @@ impl Runtime {
         name: &str,
         args: HashMap<String, Value>,
     ) -> anyhow::Result<Option<render::RenderNode>> {
-        let nodes = self.render_component(name, vec![], args, &self.root_scope)?;
+        let nodes = self.render_component(name, vec![], args)?;
         let nodes_len = nodes.len();
 
         if nodes_len <= 0 {
@@ -63,7 +63,6 @@ impl Runtime {
         name: &str,
         parent_slot: Vec<render::RenderNode>,
         args: HashMap<String, Value>,
-        scope: &ScopeRef,
     ) -> anyhow::Result<Vec<render::RenderNode>> {
         let component = self
             .components
@@ -72,7 +71,7 @@ impl Runtime {
 
         validate_component_args(&component, &args)?;
 
-        let scope = env::Scope::new_child(scope);
+        let scope = env::Scope::new_child(&self.root_scope);
         for decl in component
             .arg_declarations
             .iter()
@@ -137,7 +136,6 @@ impl Runtime {
                             nodes
                         },
                         args_map,
-                        scope,
                     )?
                 }
             }
