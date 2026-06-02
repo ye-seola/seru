@@ -515,6 +515,49 @@ impl<'s> Parser<'s> {
                 return Ok(expr);
             }
 
+            SyntaxKind::LBrace => {
+                let start_span = self.next().span;
+
+                let mut map = Vec::new();
+                if self.peek_kind(0) != SyntaxKind::RBrace {
+                    loop {
+                        let key = {
+                            let Token::Identifier(key) = self.expect(SyntaxKind::Identifier)?.token
+                            else {
+                                unreachable!();
+                            };
+
+                            key.to_string()
+                        };
+
+                        // colon
+                        self.expect(SyntaxKind::Colon)?;
+
+                        // value expr
+                        let value = self.parse_expr()?;
+
+                        map.push((key, value));
+
+                        if self.peek_kind(0) != SyntaxKind::Comma {
+                            break;
+                        }
+
+                        self.next();
+
+                        if self.peek_kind(0) == SyntaxKind::RBrace {
+                            break;
+                        }
+                    }
+                }
+
+                let end_span = self.expect(SyntaxKind::RBrace)?.span;
+
+                Ok(ast::Expr {
+                    kind: ast::ExprKind::Dict(map),
+                    span: merge_span(&start_span, &end_span),
+                })
+            }
+
             SyntaxKind::Identifier => {
                 let spanned = self.next();
 

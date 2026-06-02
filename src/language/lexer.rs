@@ -44,9 +44,13 @@ pub enum Token<'s> {
 
     #[token("[")]
     LBracket,
-
     #[token("]")]
     RBracket,
+
+    #[token("{")]
+    LBrace,
+    #[token("}")]
+    RBrace,
 
     // comment
     #[regex(r"//[^\r\n]*", allow_greedy = true)]
@@ -119,6 +123,8 @@ pub enum SyntaxKind {
     RParen,
     LBracket,
     RBracket,
+    LBrace,
+    RBrace,
     Comment,
     True,
     False,
@@ -157,6 +163,8 @@ impl From<Token<'_>> for SyntaxKind {
             Token::RParen => SyntaxKind::RParen,
             Token::LBracket => SyntaxKind::LBracket,
             Token::RBracket => SyntaxKind::RBracket,
+            Token::LBrace => SyntaxKind::LBrace,
+            Token::RBrace => SyntaxKind::RBrace,
             Token::Comment(_) => SyntaxKind::Comment,
             Token::True => SyntaxKind::True,
             Token::False => SyntaxKind::False,

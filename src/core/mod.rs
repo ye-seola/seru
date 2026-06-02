@@ -1,9 +1,12 @@
+use std::collections::HashMap;
+
 #[allow(unpredictable_function_pointer_comparisons)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     String(String),
     Number(f32),
     Array(Vec<Value>),
+    Dict(HashMap<String, Value>),
     Bool(bool),
     Null,
     Func(SeruUserFunc),
@@ -17,6 +20,7 @@ pub enum ValueType {
     String,
     Number,
     Array,
+    Dict,
     Bool,
     Null,
     Func,
@@ -28,6 +32,7 @@ impl Value {
             Value::String(_) => ValueType::String,
             Value::Number(_) => ValueType::Number,
             Value::Array(_) => ValueType::Array,
+            Value::Dict(_) => ValueType::Dict,
             Value::Bool(_) => ValueType::Bool,
             Value::Null => ValueType::Null,
             Value::Func(_) => ValueType::Func,

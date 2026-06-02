@@ -25,6 +25,7 @@ pub enum ExprKind {
     Bool(bool),
     Null,
     Array(Vec<Expr>),
+    Dict(Vec<(String, Expr)>),
     Ident(String),
     Bin {
         lhs: Box<Expr>,

@@ -284,6 +284,15 @@ impl Runtime {
                     .collect::<anyhow::Result<Vec<_>>>()?,
             ),
 
+            ast::ExprKind::Dict(dict) => {
+                let mut hm = HashMap::with_capacity(dict.len());
+                for (key, expr) in dict {
+                    hm.insert(key.to_string(), self.eval_expr(expr, scope)?);
+                }
+
+                Value::Dict(hm)
+            }
+
             ast::ExprKind::Ident(name) => scope
                 .borrow()
                 .get(name)
@@ -345,21 +354,40 @@ impl Runtime {
 
             ast::ExprKind::Index { target, index } => {
                 let target = self.eval_expr(target, scope)?;
-                let index = self.eval_expr(index, scope)?.into_number()?;
+                let index = self.eval_expr(index, scope)?;
 
-                if !check_integer(index) {
-                    anyhow::bail!("index must be a integer {:?}", expr.span);
-                }
-
-                let index = index as isize;
                 match target {
                     Value::String(val) => {
+                        let index = index.into_number()?;
+                        if !check_integer(index) {
+                            anyhow::bail!("index must be a integer {:?}", expr.span);
+                        }
+
+                        let index = index as isize;
+
                         let index = calc_index(index, val.len())?;
                         Value::String(val.chars().nth(index).expect("string index").to_string())
                     }
                     Value::Array(values) => {
+                        let index = index.into_number()?;
+                        if !check_integer(index) {
+                            anyhow::bail!("index must be a integer {:?}", expr.span);
+                        }
+
+                        let index = index as isize;
+
                         let index = calc_index(index, values.len())?;
                         values[index].clone()
+                    }
+                    Value::Dict(dict) => {
+                        let key = index.into_string()?;
+
+                        match dict.get(&key) {
+                            Some(value) => value.clone(),
+                            None => {
+                                anyhow::bail!("key not found: {}", key);
+                            }
+                        }
                     }
                     _ => anyhow::bail!("cannot indexing {:?} {:?}", target.ty(), expr.span),
                 }
@@ -453,6 +481,7 @@ fn value_to_bool(value: Value) -> bool {
         Value::String(val) => val.is_empty(),
         Value::Number(val) => val != 0.0,
         Value::Array(values) => !values.is_empty(),
+        Value::Dict(dict) => !dict.is_empty(),
         Value::Bool(bool) => bool,
         Value::Null => false,
         Value::Func(_) => true,
@@ -487,6 +516,15 @@ fn value_to_string(value: Value) -> String {
                 .join(", ");
 
             format!("[{s}]")
+        }
+        Value::Dict(dict) => {
+            let s = dict
+                .iter()
+                .map(|(key, value)| format!("{key}: {}", value_to_string(value.clone())))
+                .collect::<Vec<_>>()
+                .join(", ");
+
+            format!("{{{s}}}")
         }
         Value::Bool(bool) => {
             if bool {
