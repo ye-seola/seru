@@ -485,6 +485,7 @@ fn value_to_bool(value: Value) -> bool {
         Value::Bool(bool) => bool,
         Value::Null => false,
         Value::Func(_) => true,
+        Value::Image(_) => true,
     }
 }
 
@@ -535,6 +536,7 @@ fn value_to_string(value: Value) -> String {
         }
         Value::Null => "null".to_string(),
         Value::Func(_) => "func".to_string(),
+        Value::Image(_) => "image".to_string(),
     }
 }
 

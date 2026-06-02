@@ -1,5 +1,14 @@
 use std::collections::HashMap;
 
+#[derive(Debug, Clone)]
+pub struct ImageWrap(pub skia_safe::Image);
+
+impl PartialEq for ImageWrap {
+    fn eq(&self, _other: &Self) -> bool {
+        false
+    }
+}
+
 #[allow(unpredictable_function_pointer_comparisons)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
@@ -10,6 +19,7 @@ pub enum Value {
     Bool(bool),
     Null,
     Func(SeruUserFunc),
+    Image(ImageWrap),
 }
 
 // TODO: custom error type으로 변경
@@ -24,6 +34,7 @@ pub enum ValueType {
     Bool,
     Null,
     Func,
+    Image,
 }
 
 impl Value {
@@ -36,6 +47,7 @@ impl Value {
             Value::Bool(_) => ValueType::Bool,
             Value::Null => ValueType::Null,
             Value::Func(_) => ValueType::Func,
+            Value::Image(_) => ValueType::Image,
         }
     }
 

@@ -9,10 +9,11 @@ pub mod runtime;
 use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::Context;
+use skia_safe::{Data, Image};
 
 use crate::{
     assets::DefaultAssetProvider,
-    core::Value,
+    core::{ImageWrap, Value},
     font::{FontFile, FontManager},
     language::parser::Parser,
     layout::build_layout_tree,
@@ -62,6 +63,11 @@ impl Seru {
         let prog = Parser::from_src(src)?.parse()?;
         self.runtime.evaluate(&prog)?;
         Ok(())
+    }
+
+    pub fn load_image(&self, image: &[u8]) -> Option<Value> {
+        let image = Image::from_encoded(Data::new_copy(image))?;
+        Some(Value::Image(ImageWrap(image)))
     }
 
     pub fn render(
