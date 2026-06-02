@@ -14,7 +14,7 @@ fn main() -> anyhow::Result<()> {
     let mut width = 500.0;
     let mut height = 500.0;
 
-    let seru_path = if args.len() > 1 {
+    let seru_name = if args.len() > 1 {
         args[1].clone()
     } else {
         "simple0.seru".to_string()
@@ -28,7 +28,7 @@ fn main() -> anyhow::Result<()> {
         height = args[3].parse()?;
     }
 
-    let source = fs::read_to_string(asset_root.join(seru_path))?;
+    let source = fs::read_to_string(asset_root.join(seru_name.clone()))?;
 
     let mut seru = Seru::new_with_options(&SeruOption {
         allow_network_asset: true,
@@ -55,6 +55,6 @@ fn main() -> anyhow::Result<()> {
         },
     )?;
 
-    fs::write("sample0.png", img)?;
+    fs::write(seru_name + ".png", img)?;
     Ok(())
 }
