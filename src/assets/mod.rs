@@ -13,21 +13,23 @@ impl AssetProvider for DefaultAssetProvider {
     fn load(&self, src: &str) -> anyhow::Result<Vec<u8>> {
         let src = src.trim();
         if src.starts_with("http://") || src.starts_with("https://") {
-            if !self.allow_network_asset {
-                anyhow::bail!("allow_network_asset is disabled")
-            }
-
-            let mut response = ureq::get(src).call()?;
-            return Ok(response
-                .body_mut()
-                .with_config()
-                .limit(20 * 1024 * 1024)
-                .read_to_vec()?);
+            return load_url(src);
         } else {
             let path = resolve_asset_path(src, &self.asset_root)?;
             Ok(std::fs::read(path)?)
         }
     }
+}
+
+#[cfg(feature = "network")]
+fn load_url(url: &str) -> anyhow::Result<Vec<u8>> {
+    let mut response = ureq::get(url).call()?;
+    Ok(response.body_mut().read_to_vec()?)
+}
+
+#[cfg(not(feature = "network"))]
+fn load_url(_url: &str) -> anyhow::Result<Vec<u8>> {
+    anyhow::bail!("network asset support is not enabled")
 }
 
 fn resolve_asset_path(path: &str, asset_root: &Option<PathBuf>) -> anyhow::Result<PathBuf> {
