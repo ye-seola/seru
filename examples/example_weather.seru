@@ -1,0 +1,56 @@
+component Main():
+    Center(width="100%", min_height="100%", padding="24", background="#eef6ff")[
+        Column(
+            width="100%",
+            max_width=420,
+            padding="24 20",
+            background="#ffffff",
+            radius=20,
+            gap=18,
+            cross="stretch"
+        )[
+            Row(main="between", cross="center", gap=12)[
+                Column(gap=4, shrink=1)[
+                    Text(
+                        text="서울 날씨",
+                        font_size=18,
+                        font_weight="semibold",
+                        color="#1f2937"
+                    )
+                    Text(
+                        text="현재 맑음",
+                        font_size=14,
+                        color="#64748b"
+                    )
+                ]
+
+                Center(width=56, height=56, background="#fff4cc", radius=28)[
+                    Text(text="☀️", font_size=28)
+                ]
+            ]
+
+            Text(
+                text="24°C",
+                font_size=56,
+                font_weight="bold",
+                color="#0f172a"
+            )
+
+            Column(
+                padding="16",
+                background="#f8fafc",
+                radius=14,
+                gap=10
+            )[
+                Row(main="between")[
+                    Text(text="체감", font_size=14, color="#64748b")
+                    Text(text="쾌적한 초여름 날씨", font_size=14, font_weight="medium")
+                ]
+
+                Row(main="between")[
+                    Text(text="추천", font_size=14, color="#64748b")
+                    Text(text="가벼운 외출복", font_size=14, font_weight="medium")
+                ]
+            ]
+        ]
+    ]

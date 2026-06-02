@@ -16,7 +16,7 @@ fn main() -> anyhow::Result<()> {
         load_system_fonts: true,
         fonts: vec![],
     })?;
-    seru.load_str(include_str!("simple4.seru"))?;
+    seru.load_str(include_str!("example_card_dict.seru"))?;
 
     let img = seru.render(
         "Main",
