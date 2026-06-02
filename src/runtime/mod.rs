@@ -7,10 +7,9 @@ use std::{
 use anyhow::{Context, Ok};
 
 use crate::{
-    assets::AssetProvider,
     core::Value,
     language::ast::{self, ComponentDeclaration},
-    render::{self, registry::NativeComponentRegistry},
+    render::{self, context::RenderContext, registry::NativeComponentRegistry},
     runtime::{env::ScopeRef, utils::check_integer},
 };
 
@@ -25,11 +24,11 @@ pub struct Runtime {
 }
 
 impl Runtime {
-    pub fn new(asset_provider: Box<dyn AssetProvider>) -> Runtime {
+    pub fn new(render_context: RenderContext) -> Runtime {
         Runtime {
             root_scope: Rc::new(RefCell::new(env::Scope::new(None))),
             components: HashMap::new(),
-            native_component_registery: NativeComponentRegistry::new(asset_provider),
+            native_component_registery: NativeComponentRegistry::new(render_context),
         }
     }
 

@@ -1,13 +1,10 @@
-use crate::{
-    assets::AssetProvider,
-    render::{self, RenderNode, args::Args, styles::*},
-};
+use crate::render::{self, RenderNode, args::Args, context::RenderContext, styles::*};
 
 pub fn box_func(
     name: &str,
     mut args: Args,
     children: Vec<RenderNode>,
-    _asset_provider: &dyn AssetProvider,
+    _render_context: &RenderContext,
 ) -> anyhow::Result<RenderNode> {
     let common_style = CommonStyle::take_from(&mut args)?;
     let box_style = BoxStyle::take_from(name, &mut args)?;

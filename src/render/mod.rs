@@ -1,5 +1,6 @@
 mod args;
 pub mod components;
+pub mod context;
 pub mod registry;
 mod skia;
 pub mod styles;
@@ -30,6 +31,10 @@ pub enum RenderNodeKind {
     Image {
         style: ImageStyle,
         image: Option<skia_safe::Image>,
+    },
+    Svg {
+        style: SvgStyle,
+        svg: Option<skia_safe::svg::Dom>,
     },
 }
 

@@ -1,6 +1,8 @@
 use skia_safe::{
-    Canvas, Color as SKColor, Paint, PaintStyle, Point, RRect, Rect, canvas::SrcRectConstraint,
-    surfaces, svg::Canvas as SvgCanvas,
+    Canvas, Color as SKColor, Paint, PaintStyle, Point, RRect, Rect,
+    canvas::SrcRectConstraint,
+    surfaces,
+    svg::{Canvas as SvgCanvas, Length, LengthUnit},
 };
 
 use crate::{
@@ -129,6 +131,35 @@ fn render_skia_node(
                 .map(|rect| (rect, SrcRectConstraint::Strict));
 
             canvas.draw_image_rect(image, src_rect, dst_rect, &paint);
+        }
+        RenderNodeKind::Svg {
+            style,
+            svg: Some(svg),
+        } => {
+            canvas.save();
+            canvas.translate(Point {
+                x: rect.x(),
+                y: rect.y(),
+            });
+
+            {
+                if let Some(color) = style.color {
+                    svg.root().set_color(color.into());
+                }
+
+                if let Some(stroke_width) = style.stroke_width {
+                    svg.root()
+                        .set_stroke_width(Length::new(stroke_width, LengthUnit::PX));
+                }
+            }
+
+            svg.root()
+                .set_width(Length::new(rect.width(), LengthUnit::PX));
+            svg.root()
+                .set_height(Length::new(rect.width(), LengthUnit::PX));
+
+            svg.render(canvas);
+            canvas.restore();
         }
         _ => {}
     }

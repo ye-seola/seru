@@ -6,7 +6,7 @@ pub mod layout;
 pub mod render;
 pub mod runtime;
 
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::HashMap, path::PathBuf, rc::Rc};
 
 use anyhow::Context;
 use skia_safe::{Data, Image};
@@ -17,7 +17,7 @@ use crate::{
     font::{FontFile, FontManager},
     language::parser::Parser,
     layout::build_layout_tree,
-    render::RenderOptions,
+    render::{RenderOptions, context::RenderContext},
     runtime::Runtime,
 };
 
@@ -31,7 +31,7 @@ pub struct SeruOption {
 
 pub struct Seru {
     runtime: Runtime,
-    font_mgr: FontManager,
+    font_manager: Rc<FontManager>,
 }
 
 impl Seru {
@@ -45,17 +45,22 @@ impl Seru {
     }
 
     pub fn new_with_options(options: &SeruOption) -> anyhow::Result<Self> {
-        let asset_provider = Box::new(DefaultAssetProvider {
+        let font_manager = Rc::new(FontManager::new(options.load_system_fonts, &options.fonts)?);
+
+        let asset_provider = Rc::new(DefaultAssetProvider {
             allow_network_asset: options.allow_network_asset,
             asset_root: options.asset_root.clone(),
         });
 
-        let mut runtime = Runtime::new(asset_provider);
+        let mut runtime = Runtime::new(RenderContext {
+            font_manager: font_manager.clone(),
+            asset_provider,
+        });
         runtime.register_builtin_functions();
 
         Ok(Self {
             runtime,
-            font_mgr: FontManager::new(options.load_system_fonts, &options.fonts)?,
+            font_manager,
         })
     }
 
@@ -85,9 +90,9 @@ impl Seru {
             &node,
             options.width as usize,
             options.height as usize,
-            &self.font_mgr,
+            &self.font_manager,
         )?;
 
-        render::render(&options, &layout, &self.font_mgr)
+        render::render(&options, &layout, &self.font_manager)
     }
 }

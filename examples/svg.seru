@@ -1,0 +1,5 @@
+component Main():
+    Column(padding=16)[
+        Svg(width=48, height=48, src="feather-anchor.svg", color="red", background="blue")
+        Svg(width=48, height=48, src="feather-anchor.svg", stroke_width=4)
+    ]

@@ -47,6 +47,7 @@ pub fn build_layout_tree<'a>(
         },
     )?;
 
+
     Ok(build_render_tree_inner(&root, &taffy_tree)?)
 }
 
@@ -132,6 +133,37 @@ fn measure(
                 },
             }
         }
+        Some(RenderNode {
+            kind:
+                RenderNodeKind::Svg {
+                    style: _,
+                    svg: Some(svg),
+                },
+            children: _,
+            style: _,
+        }) => match svg.root().view_box() {
+            Some(rect) => {
+                let img_width = rect.width() as f32;
+                let img_height = rect.height() as f32;
+
+                match (known_dimensions.width, known_dimensions.height) {
+                    (Some(width), Some(height)) => Size { width, height },
+                    (Some(width), None) => Size {
+                        width,
+                        height: img_height * (width / img_width),
+                    },
+                    (None, Some(height)) => Size {
+                        width: img_width * (height / img_height),
+                        height,
+                    },
+                    (None, None) => Size {
+                        width: img_width,
+                        height: img_height,
+                    },
+                }
+            }
+            None => Size::ZERO,
+        },
         _ => Size::ZERO,
     }
 }

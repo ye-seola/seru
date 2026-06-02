@@ -17,14 +17,19 @@ pub struct FontFile {
 
 pub struct FontManager {
     font_collection: FontCollection,
+    font_mgr: FontMgr,
 }
 
 impl FontManager {
     pub fn new(load_system_fonts: bool, fonts: &[FontFile]) -> anyhow::Result<FontManager> {
         let mut font_collection = FontCollection::new();
 
+        let mut ffont_mgr: Option<FontMgr> = None;
+
         if load_system_fonts {
-            font_collection.set_default_font_manager(FontMgr::new(), None);
+            let mgr = FontMgr::new();
+            font_collection.set_default_font_manager(mgr.clone(), None);
+            ffont_mgr = Some(mgr);
         }
 
         if fonts.len() > 0 {
@@ -40,10 +45,19 @@ impl FontManager {
                 provider.register_typeface(typeface, font.alias.clone().as_deref());
             }
 
-            font_collection.set_asset_font_manager(FontMgr::from(provider));
+            let mgr = FontMgr::from(provider);
+            font_collection.set_asset_font_manager(mgr.clone());
+            ffont_mgr = Some(mgr);
         }
 
-        Ok(FontManager { font_collection })
+        Ok(FontManager {
+            font_collection,
+            font_mgr: ffont_mgr.unwrap_or_else(|| FontMgr::empty()),
+        })
+    }
+
+    pub fn get_font_mgr(&self) -> FontMgr {
+        self.font_mgr.clone()
     }
 
     pub fn create_paragraph(&self, style: &TextStyle, text: &str) -> Paragraph {

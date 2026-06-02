@@ -15,5 +15,5 @@ name = "seru"
 path = "src/lib.rs"
 
 [features]
-default = []
+default = ["skia-safe/svg"]
 webp = ["skia-safe/webp"]

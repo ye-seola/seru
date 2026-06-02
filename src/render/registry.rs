@@ -3,16 +3,15 @@ use std::collections::HashMap;
 use anyhow::Context;
 
 use crate::{
-    assets::AssetProvider,
     core::Value,
-    render::{RenderNode, args::Args, components},
+    render::{RenderNode, args::Args, components, context::RenderContext},
 };
 
 pub type ComponentFunc = fn(
     name: &str,
     args: Args,
     children: Vec<RenderNode>,
-    asset_provider: &dyn AssetProvider,
+    render_context: &RenderContext,
 ) -> anyhow::Result<RenderNode>;
 
 #[derive(Debug)]
@@ -32,14 +31,14 @@ impl NativeComponent {
 
 pub struct NativeComponentRegistry {
     components: HashMap<String, NativeComponent>,
-    asset_provider: Box<dyn AssetProvider>,
+    render_context: RenderContext,
 }
 
 impl NativeComponentRegistry {
-    pub fn new(asset_provider: Box<dyn AssetProvider>) -> NativeComponentRegistry {
+    pub fn new(render_context: RenderContext) -> NativeComponentRegistry {
         let mut registry = NativeComponentRegistry {
             components: HashMap::new(),
-            asset_provider,
+            render_context,
         };
 
         registry.register_builtins();
@@ -55,6 +54,7 @@ impl NativeComponentRegistry {
             NativeComponent::new("Stack", components::stack_func),
             NativeComponent::new("Text", components::text_func),
             NativeComponent::new("Image", components::image_func),
+            NativeComponent::new("Svg", components::svg_func),
         ];
 
         for ele in components {
@@ -87,6 +87,6 @@ impl NativeComponentRegistry {
             .get(name)
             .with_context(|| format!("cannot find native component: {}", name))?;
 
-        (component.func)(name, Args::new(args), children, &*self.asset_provider)
+        (component.func)(name, Args::new(args), children, &self.render_context)
     }
 }

@@ -2,12 +2,14 @@ mod box_;
 mod common;
 mod image;
 mod stack;
+mod svg;
 mod text;
 
 pub use box_::{BoxDirection, BoxStyle, CrossAlign, MainAlign};
 pub use common::CommonStyle;
 pub use image::{ImageFit, ImageStyle};
 pub use stack::{Place, StackStyle};
+pub use svg::SvgStyle;
 pub use text::{FontWeight, TextStyle};
 
 #[derive(Debug, Clone, Copy)]

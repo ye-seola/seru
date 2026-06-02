@@ -1,16 +1,18 @@
+use std::rc::Rc;
+
 use skia_safe::{Data, Image};
 
 use crate::{
     assets::AssetProvider,
     core::{ImageWrap, Value},
-    render::{self, RenderNode, args::Args, styles::*},
+    render::{self, RenderNode, args::Args, context::RenderContext, styles::*},
 };
 
 pub fn image_func(
     _name: &str,
     mut args: Args,
     children: Vec<RenderNode>,
-    asset_provider: &dyn AssetProvider,
+    render_context: &RenderContext,
 ) -> anyhow::Result<RenderNode> {
     let common_style = CommonStyle::take_from(&mut args)?;
     let image_style = ImageStyle::take_from(&mut args)?;
@@ -20,7 +22,7 @@ pub fn image_func(
 
     let image = match src {
         Value::String(src) => {
-            let image = load_image(asset_provider, &src);
+            let image = load_image(&render_context.asset_provider, &src);
             if image.is_none() {
                 eprintln!("image not loaded: {}", src);
             }
@@ -41,7 +43,7 @@ pub fn image_func(
     })
 }
 
-fn load_image(asset_provider: &dyn AssetProvider, src: &str) -> Option<Image> {
+fn load_image(asset_provider: &Rc<dyn AssetProvider>, src: &str) -> Option<Image> {
     let image = asset_provider.load(&src).ok()?;
     Image::from_encoded(Data::new_copy(&image))
 }

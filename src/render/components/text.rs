@@ -1,17 +1,15 @@
-use crate::{
-    assets::AssetProvider,
-    render::{
-        RenderNode, RenderNodeKind,
-        args::Args,
-        styles::{CommonStyle, TextStyle},
-    },
+use crate::render::{
+    RenderNode, RenderNodeKind,
+    args::Args,
+    context::RenderContext,
+    styles::{CommonStyle, TextStyle},
 };
 
 pub fn text_func(
     _name: &str,
     mut args: Args,
     children: Vec<RenderNode>,
-    _asset_provider: &dyn AssetProvider,
+    _render_context: &RenderContext,
 ) -> anyhow::Result<RenderNode> {
     let common_style = CommonStyle::take_from(&mut args)?;
     let text_style = TextStyle::take_from(&mut args)?;
