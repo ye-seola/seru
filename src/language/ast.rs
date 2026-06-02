@@ -106,6 +106,7 @@ pub enum ChildNode {
     ComponentCall(ComponentCall),
     For(ForBlock),
     If(IfBlock),
+    Slot,
 }
 
 #[derive(Debug, Clone)]

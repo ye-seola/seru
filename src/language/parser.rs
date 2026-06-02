@@ -166,8 +166,22 @@ impl<'s> Parser<'s> {
             Token::If => Ok(ast::ChildNode::If(self.parse_if_node()?)),
             Token::For => Ok(ast::ChildNode::For(self.parse_for_node()?)),
             Token::Identifier(_) => Ok(ast::ChildNode::ComponentCall(self.parse_component_call()?)),
+            Token::Slot => {
+                self.parse_slot_node()?;
+                Ok(ast::ChildNode::Slot)
+            }
             tok => anyhow::bail!("expect node but {:?}", tok),
         }
+    }
+
+    fn parse_slot_node(&mut self) -> anyhow::Result<()> {
+        self.expect(SyntaxKind::Slot)?;
+        if self.peek_kind(0) == SyntaxKind::LParen {
+            self.next();
+            self.expect(SyntaxKind::RParen)?;
+        }
+
+        Ok(())
     }
 
     fn parse_if_node(&mut self) -> anyhow::Result<ast::IfBlock> {

@@ -33,6 +33,9 @@ pub enum Token<'s> {
     #[token("component")]
     Component,
 
+    #[token("Slot")]
+    Slot,
+
     #[token("const")]
     Const,
 
@@ -118,6 +121,7 @@ pub enum SyntaxKind {
     For,
     In,
     Component,
+    Slot,
     Const,
     LParen,
     RParen,
@@ -158,6 +162,7 @@ impl From<Token<'_>> for SyntaxKind {
             Token::For => SyntaxKind::For,
             Token::In => SyntaxKind::In,
             Token::Component => SyntaxKind::Component,
+            Token::Slot => SyntaxKind::Slot,
             Token::Const => SyntaxKind::Const,
             Token::LParen => SyntaxKind::LParen,
             Token::RParen => SyntaxKind::RParen,

@@ -46,7 +46,7 @@ impl Runtime {
         name: &str,
         args: HashMap<String, Value>,
     ) -> anyhow::Result<Option<render::RenderNode>> {
-        let nodes = self.render_component(name, args, &self.root_scope)?;
+        let nodes = self.render_component(name, vec![], args, &self.root_scope)?;
         let nodes_len = nodes.len();
 
         if nodes_len <= 0 {
@@ -61,6 +61,7 @@ impl Runtime {
     fn render_component(
         &self,
         name: &str,
+        parent_slot: Vec<render::RenderNode>,
         args: HashMap<String, Value>,
         scope: &ScopeRef,
     ) -> anyhow::Result<Vec<render::RenderNode>> {
@@ -87,12 +88,13 @@ impl Runtime {
             scope.borrow_mut().set(&name, value.clone());
         }
 
-        Ok(self.render_childnode(&component.body, &scope)?)
+        Ok(self.render_childnode(&component.body, parent_slot, &scope)?)
     }
 
     fn render_childnode(
         &self,
         node: &ast::ChildNode,
+        parent_slot: Vec<render::RenderNode>,
         scope: &ScopeRef,
     ) -> anyhow::Result<Vec<render::RenderNode>> {
         Ok(match node {
@@ -110,7 +112,11 @@ impl Runtime {
                 {
                     let mut children = Vec::with_capacity(component_call.body.len());
                     for child in &component_call.body {
-                        children.extend(self.render_childnode(child, scope)?);
+                        children.extend(self.render_childnode(
+                            child,
+                            parent_slot.clone(),
+                            scope,
+                        )?);
                     }
 
                     vec![self.native_component_registery.create(
@@ -118,45 +124,21 @@ impl Runtime {
                         args_map,
                         children,
                     )?]
-
-                    // // TODO: 기본 component
-                    // let kind = match component_call.name.as_str() {
-                    //     "Center" => render::RenderNodeKind::Box,
-                    //     "Column" => render::RenderNodeKind::Box,
-                    //     "Row" => render::RenderNodeKind::Box,
-                    //     "Box" => render::RenderNodeKind::Box,
-
-                    //     "Text" => {
-                    //         let text = args_map
-                    //             .get("text")
-                    //             .cloned()
-                    //             .with_context(|| format!("required"))?
-                    //             .into_string()?;
-
-                    //         render::RenderNodeKind::Text {
-                    //             text,
-                    //             style: render::styles::TextStyle {
-                    //                 ..Default::default()
-                    //             },
-                    //         }
-                    //     }
-                    //     "Image" => render::RenderNodeKind::Image {
-                    //         style: render::styles::ImageStyle {
-                    //             ..Default::default()
-                    //         },
-                    //     },
-                    //     _ => unreachable!(),
-                    // };
-
-                    // vec![render::RenderNode {
-                    //     kind,
-                    //     children,
-                    //     style: render::styles::CommonStyle {
-                    //         ..Default::default()
-                    //     },
-                    // }]
                 } else {
-                    self.render_component(&component_call.name, args_map, scope)?
+                    self.render_component(
+                        &component_call.name,
+                        {
+                            let mm = parent_slot;
+                            let parent_slot = &component_call.body;
+                            let mut nodes = Vec::with_capacity(parent_slot.len());
+                            for node in parent_slot {
+                                nodes.extend(self.render_childnode(&node, mm.clone(), &scope)?);
+                            }
+                            nodes
+                        },
+                        args_map,
+                        scope,
+                    )?
                 }
             }
             ast::ChildNode::For(for_block) => {
@@ -178,7 +160,11 @@ impl Runtime {
                                 .set(&for_block.item_name, Value::String(ch.to_string()));
 
                             for node in &for_block.body {
-                                nodes.extend(self.render_childnode(&node, &for_scope)?);
+                                nodes.extend(self.render_childnode(
+                                    &node,
+                                    parent_slot.clone(),
+                                    &for_scope,
+                                )?);
                             }
                         }
 
@@ -197,7 +183,11 @@ impl Runtime {
                             for_scope.borrow_mut().set(&for_block.item_name, ch.clone());
 
                             for node in &for_block.body {
-                                nodes.extend(self.render_childnode(&node, &for_scope)?);
+                                nodes.extend(self.render_childnode(
+                                    &node,
+                                    parent_slot.clone(),
+                                    &for_scope,
+                                )?);
                             }
                         }
 
@@ -213,7 +203,7 @@ impl Runtime {
                 if cond {
                     let mut nodes = Vec::with_capacity(if_block.body.len());
                     for node in &if_block.body {
-                        nodes.extend(self.render_childnode(node, &scope)?);
+                        nodes.extend(self.render_childnode(node, parent_slot.clone(), &scope)?);
                     }
 
                     nodes
@@ -221,6 +211,7 @@ impl Runtime {
                     vec![]
                 }
             }
+            ast::ChildNode::Slot => parent_slot,
         })
     }
 

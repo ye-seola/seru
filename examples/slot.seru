@@ -1,0 +1,9 @@
+component Sub():
+    Box() [
+        Slot()
+    ]
+
+component Main():
+    Sub()[
+        Text(text="Hello World")
+    ]
