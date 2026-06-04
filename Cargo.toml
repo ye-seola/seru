@@ -2,6 +2,9 @@
 name = "seru"
 version = "0.1.0"
 edition = "2024"
+license = "Apache-2.0"
+repository = "https://github.com/ye-seola/seru"
+description = "simple image renderer"
 
 [dependencies]
 anyhow = { version = "1.0", features = ["backtrace"] }
