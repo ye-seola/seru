@@ -6,15 +6,13 @@ edition = "2024"
 [dependencies]
 anyhow = { version = "1.0", features = ["backtrace"] }
 logos = "0.16.1"
-skia-safe = { version = "0.97.2", features = ["textlayout"] }
+skia-safe = { version = "0.97.2", features = ["svg", "textlayout"] }
 taffy = "0.10.1"
-ureq = { version = "3", optional = true }
+ureq = { version = "3" }
 
 [lib]
 name = "seru"
 path = "src/lib.rs"
 
 [features]
-default = ["skia-safe/svg", "network"]
 webp = ["skia-safe/webp"]
-network = ["dep:ureq"]

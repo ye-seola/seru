@@ -21,15 +21,9 @@ impl AssetProvider for DefaultAssetProvider {
     }
 }
 
-#[cfg(feature = "network")]
 fn load_url(url: &str) -> anyhow::Result<Vec<u8>> {
     let mut response = ureq::get(url).call()?;
     Ok(response.body_mut().read_to_vec()?)
-}
-
-#[cfg(not(feature = "network"))]
-fn load_url(_url: &str) -> anyhow::Result<Vec<u8>> {
-    anyhow::bail!("network asset support is not enabled")
 }
 
 fn resolve_asset_path(path: &str, asset_root: &Option<PathBuf>) -> anyhow::Result<PathBuf> {
