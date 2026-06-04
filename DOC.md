@@ -1,4 +1,4 @@
-# Seru 기본 컴포넌트
+# Seru
 
 ## 값 형식
 
@@ -149,6 +149,22 @@
 | `"cover"` | 영역을 덮도록 채움 |
 | `"contain"` | 이미지 전체가 보이도록 맞춤 |
 
+## 특수 컴포넌트
+
+| 컴포넌트 | 설명 |
+|---|---|---|
+| `If(condition)[ children ]` | condition이 참일 떄만 children를 보여줌 |
+| `For(item in items)[ children ]` | items를 순회하며 item에 넣고 children을 반복 |
+| `For(idx, item in items)[ children ]` | items를 순회하며 idx, item에 넣고 children을 반복 |
+| `Slot` | 사용자 정의 컴포넌트에서 밖에서 주입된 children을 보여줄 때 사용 |
+
+## 빌트인 함수
+
+| 함수 | 설명 |
+|---|---|---|
+| `repeat(value, count)` | value를 count번 반복 |
+| `if(condition, true_value, false_value)` | condition이 true면 true_value 아니면 false_value |
+
 ## 예시
 
 ```seru
@@ -174,6 +190,23 @@ component Main():
                 height=180,
                 fit="cover",
                 radius=8
+            )
+        ]
+    ]
+```
+
+```seru
+component Child():
+    Slot()
+
+component Main():
+    Center(width="100%", height="100%", gap=24, background="#f5f7fb")[
+        Child()[
+            Text(
+                text="Hello Seru",
+                font_size=24,
+                font_weight="bold",
+                color="#0d58a3"
             )
         ]
     ]
