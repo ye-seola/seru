@@ -71,4 +71,17 @@ impl Value {
             _ => anyhow::bail!("expected bool"),
         }
     }
+
+    pub fn is_truthy(&self) -> bool {
+        match self {
+            Value::String(val) => val.is_empty(),
+            Value::Number(val) => (*val) != 0.0,
+            Value::Array(values) => !values.is_empty(),
+            Value::Dict(dict) => !dict.is_empty(),
+            Value::Bool(bool) => *bool,
+            Value::Null => false,
+            Value::Func(_) => true,
+            Value::Image(_) => true,
+        }
+    }
 }

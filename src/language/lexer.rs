@@ -21,10 +21,10 @@ pub enum StringPartKind {
 #[derive(Logos, Debug, PartialEq, Clone)]
 #[logos(skip r"\s+")]
 pub enum Token<'s> {
-    #[token("if")]
+    #[token("If")]
     If,
 
-    #[token("for")]
+    #[token("For")]
     For,
 
     #[token("in")]

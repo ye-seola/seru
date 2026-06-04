@@ -10,7 +10,7 @@ component Main():
             border=2,
         )[
             Column(width="auto") [
-                for(idx, val in ["Hello", "World"]) [
+                For(idx, val in ["Hello", "World"]) [
                     Text(
                         text="${idx}. ${val}",
                         color="#0d58a3", 
@@ -21,8 +21,8 @@ component Main():
                     )
                 ]
 
-                for(val in ["Pen", "Pine", "Apple", "MacBook"]) [
-                    if(val[0] == "M") [
+                For(val in ["Pen", "Pine", "Apple", "MacBook"]) [
+                    If(val[0] == "M") [
                         Text(
                             text="${val}",
                             color="#0d58a3", 

@@ -3,6 +3,7 @@ use crate::runtime::{Runtime, Value, utils::check_integer};
 impl Runtime {
     pub fn register_builtin_functions(&mut self) {
         self.set("repeat", Value::Func(repeat));
+        self.set("if", Value::Func(if_));
     }
 }
 
@@ -33,4 +34,17 @@ fn repeat(args: Vec<Value>) -> anyhow::Result<Value> {
         }
         v => anyhow::bail!("cannot repeat {:?}", v.ty()),
     })
+}
+
+fn if_(args: Vec<Value>) -> anyhow::Result<Value> {
+    if args.len() != 3 {
+        anyhow::bail!("if required 3 args")
+    }
+
+    let cond = args[0].is_truthy();
+    if cond {
+        Ok(args[1].clone())
+    } else {
+        Ok(args[2].clone())
+    }
 }

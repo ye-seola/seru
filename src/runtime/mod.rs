@@ -195,7 +195,7 @@ impl Runtime {
             }
             ast::ChildNode::If(if_block) => {
                 let cond = self.eval_expr(&if_block.condition, scope)?;
-                let cond = value_to_bool(cond);
+                let cond = cond.is_truthy();
 
                 if cond {
                     let mut nodes = Vec::with_capacity(if_block.body.len());
@@ -304,7 +304,7 @@ impl Runtime {
                         Value::Number(num) => Value::Number(-num),
                         _ => anyhow::bail!("cannot unary minus {:?}", val),
                     },
-                    ast::UnaryOp::Not => Value::Bool(!value_to_bool(val)),
+                    ast::UnaryOp::Not => Value::Bool(!(val.is_truthy())),
                 }
             }
 
@@ -461,19 +461,6 @@ impl Runtime {
             }
             _ => unreachable!(),
         })
-    }
-}
-
-fn value_to_bool(value: Value) -> bool {
-    match value {
-        Value::String(val) => val.is_empty(),
-        Value::Number(val) => val != 0.0,
-        Value::Array(values) => !values.is_empty(),
-        Value::Dict(dict) => !dict.is_empty(),
-        Value::Bool(bool) => bool,
-        Value::Null => false,
-        Value::Func(_) => true,
-        Value::Image(_) => true,
     }
 }
 

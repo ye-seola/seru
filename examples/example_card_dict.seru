@@ -38,7 +38,7 @@ component Main(data):
         gap=16
     )[
 
-        for(idx, item in data)[
+        For(idx, item in data)[
             Card(top="${idx}", title=item["name"], bottom="BOTTOM")
         ]
     ]
