@@ -1,3 +1,4 @@
+use anyhow::Context;
 use skia_safe::{
     Color as SKColor, FontMgr, FontStyle,
     font_style::{Slant, Weight, Width},
@@ -6,12 +7,19 @@ use skia_safe::{
         TypefaceFontProvider,
     },
 };
+use std::borrow::Cow;
 
 use crate::render::{styles::FontWeight, styles::TextStyle};
 
 #[derive(Debug)]
+pub enum Font {
+    Path(String),
+    Bytes(Vec<u8>),
+}
+
+#[derive(Debug)]
 pub struct FontFile {
-    pub path: String,
+    pub font: Font,
     pub alias: Option<String>,
 }
 
@@ -33,15 +41,18 @@ impl FontManager {
         }
 
         if fonts.len() > 0 {
-            let font_mgr = FontMgr::empty();
+            let font_mgr = FontMgr::custom_empty().with_context(|| "FontMgr::custom_apply fail")?;
             let mut provider = TypefaceFontProvider::new();
 
             for font in fonts {
-                let font_data = std::fs::read(&font.path)?;
-                let typeface = font_mgr
-                    .new_from_data(&font_data, None)
-                    .ok_or_else(|| anyhow::anyhow!("failed to load font: {}", font.path))?;
+                let (font_data, font_name) = match &font.font {
+                    Font::Path(path) => (Cow::Owned(std::fs::read(path)?), path.to_string()),
+                    Font::Bytes(data) => (Cow::Borrowed(data), "[bytes]".to_string()),
+                };
 
+                let typeface = font_mgr
+                    .new_from_data(font_data.as_ref(), None)
+                    .ok_or_else(|| anyhow::anyhow!("failed to load font: {}", font_name))?;
                 provider.register_typeface(typeface, font.alias.clone().as_deref());
             }
 

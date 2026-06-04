@@ -535,6 +535,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "logos",
+ "serde_json",
  "skia-safe",
  "taffy",
  "ureq",

@@ -1,0 +1,9 @@
+[target.wasm32-unknown-emscripten]
+rustflags = [
+  "-C", "link-arg=--js-library=library.js",
+
+  "-C", "link-arg=-sASYNCIFY",
+  "-C", "link-arg=-sASYNCIFY_IMPORTS=[\"js_fetch\"]",
+
+  "-C", "link-arg=-sEXPORTED_RUNTIME_METHODS=[\"ccall\", \"UTF8ToString\"]",
+]
