@@ -2,6 +2,7 @@ use std::{collections::HashMap, fs};
 
 use seru::{
     Seru, SeruOption,
+    core::Value,
     render::{RenderOptions, RenderOutputType, styles::Color},
 };
 
@@ -9,7 +10,7 @@ fn main() -> anyhow::Result<()> {
     let width = 500.0;
     let height = 500.0;
 
-    let mut seru = Seru::new_with_options(&SeruOption {
+    let seru = Seru::new_with_options(&SeruOption {
         allow_network_asset: true,
         asset_root: None,
         load_system_fonts: true,
@@ -17,18 +18,19 @@ fn main() -> anyhow::Result<()> {
     })?;
 
     let image_data = include_bytes!("img1.png");
-    seru.load_str(
+
+    let mut template = seru.compile_str(
         r#"
 component Main(from_rust):
     Image(src=from_rust, fit="cover", width="100%", height="100%")
     "#,
     )?;
 
-    let img = seru.render(
+    let img = template.render(
         "Main",
         HashMap::from([(
             "from_rust".to_string(),
-            seru.load_image(image_data).expect("failed to load image"),
+            Value::image_from_bytes(image_data).expect("failed to load image"),
         )]),
         RenderOptions {
             output_type: RenderOutputType::PNG,

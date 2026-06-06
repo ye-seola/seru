@@ -30,6 +30,11 @@ pub struct SeruOption {
 }
 
 pub struct Seru {
+    render_context: RenderContext,
+    font_manager: Rc<FontManager>,
+}
+
+pub struct SeruTemplate {
     runtime: Runtime,
     font_manager: Rc<FontManager>,
 }
@@ -52,29 +57,30 @@ impl Seru {
             asset_root: options.asset_root.clone(),
         });
 
-        let mut runtime = Runtime::new(RenderContext {
-            font_manager: font_manager.clone(),
-            asset_provider,
-        });
-        runtime.register_builtin_functions();
-
         Ok(Self {
-            runtime,
+            render_context: RenderContext {
+                font_manager: font_manager.clone(),
+                asset_provider,
+            },
             font_manager,
         })
     }
 
-    pub fn load_str(&mut self, src: &str) -> anyhow::Result<()> {
+    pub fn compile_str(&self, src: &str) -> anyhow::Result<SeruTemplate> {
         let prog = Parser::from_src(src)?.parse()?;
-        self.runtime.evaluate(&prog)?;
-        Ok(())
-    }
 
-    pub fn load_image(&self, image: &[u8]) -> Option<Value> {
-        let image = Image::from_encoded(Data::new_copy(image))?;
-        Some(Value::Image(ImageWrap(image)))
-    }
+        let mut runtime = Runtime::new(self.render_context.clone());
+        runtime.register_builtin_functions();
+        runtime.evaluate(&prog)?;
 
+        Ok(SeruTemplate {
+            runtime,
+            font_manager: self.font_manager.clone(),
+        })
+    }
+}
+
+impl SeruTemplate {
     pub fn render(
         &mut self,
         component: &str,

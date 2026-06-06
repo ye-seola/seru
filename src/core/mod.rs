@@ -1,5 +1,8 @@
 use std::collections::HashMap;
 
+use anyhow::Context;
+use skia_safe::{Data, Image};
+
 #[derive(Debug, Clone)]
 pub struct ImageWrap(pub skia_safe::Image);
 
@@ -83,5 +86,11 @@ impl Value {
             Value::Func(_) => true,
             Value::Image(_) => true,
         }
+    }
+
+    pub fn image_from_bytes(image: &[u8]) -> anyhow::Result<Self> {
+        let image = Image::from_encoded(Data::new_copy(image)).context("failed to decode image")?;
+
+        Ok(Value::Image(ImageWrap(image)))
     }
 }

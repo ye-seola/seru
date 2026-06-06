@@ -30,15 +30,16 @@ fn main() -> anyhow::Result<()> {
 
     let source = fs::read_to_string(asset_root.join(seru_name.clone()))?;
 
-    let mut seru = Seru::new_with_options(&SeruOption {
+    let seru = Seru::new_with_options(&SeruOption {
         allow_network_asset: true,
         asset_root: Some(asset_root),
         load_system_fonts: true,
         fonts: vec![],
     })?;
-    seru.load_str(&source)?;
 
-    let img = seru.render(
+    let mut template = seru.compile_str(&source)?;
+    
+    let img = template.render(
         "Main",
         HashMap::new(),
         RenderOptions {
