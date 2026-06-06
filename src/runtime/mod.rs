@@ -480,7 +480,7 @@ fn calc_index(idx: isize, len: usize) -> anyhow::Result<usize> {
     anyhow::bail!("index out of bounds")
 }
 
-fn value_to_string(value: Value) -> String {
+pub fn value_to_string(value: Value) -> String {
     match value {
         Value::String(val) => val.to_string(),
         Value::Number(val) => val.to_string(),
