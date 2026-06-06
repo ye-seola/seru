@@ -152,7 +152,7 @@
 ## 특수 컴포넌트
 
 | 컴포넌트 | 설명 |
-|---|---|---|
+|---|---|
 | `If(condition)[ children ]` | condition이 참일 떄만 children를 보여줌 |
 | `For(item in items)[ children ]` | items를 순회하며 item에 넣고 children을 반복 |
 | `For(idx, item in items)[ children ]` | items를 순회하며 idx, item에 넣고 children을 반복 |
@@ -161,7 +161,7 @@
 ## 빌트인 함수
 
 | 함수 | 설명 |
-|---|---|---|
+|---|---|
 | `repeat(value, count)` | value를 count번 반복 |
 | `if(condition, true_value, false_value)` | condition이 true면 true_value 아니면 false_value |
 
