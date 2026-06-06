@@ -1,3 +1,4 @@
+use anyhow::Context;
 use skia_safe::{
     Color as SKColor, FontMgr, FontStyle,
     font_style::{Slant, Weight, Width},
@@ -33,7 +34,7 @@ impl FontManager {
         }
 
         if fonts.len() > 0 {
-            let font_mgr = FontMgr::empty();
+            let font_mgr = FontMgr::custom_empty().with_context(|| "font mgr fail")?;
             let mut provider = TypefaceFontProvider::new();
 
             for font in fonts {

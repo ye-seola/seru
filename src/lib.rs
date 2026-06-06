@@ -9,11 +9,10 @@ pub mod runtime;
 use std::{collections::HashMap, path::PathBuf, rc::Rc};
 
 use anyhow::Context;
-use skia_safe::{Data, Image};
 
 use crate::{
     assets::DefaultAssetProvider,
-    core::{ImageWrap, Value},
+    core::Value,
     font::{FontFile, FontManager},
     language::parser::Parser,
     layout::build_layout_tree,
