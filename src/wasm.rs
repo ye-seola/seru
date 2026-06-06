@@ -35,8 +35,13 @@ mod wasm_impl {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn render_png(source: *mut Bytes, args: *mut Bytes) -> *mut ResultBytes {
-        match render_png_inner(source, args) {
+    pub extern "C" fn render_png(
+        width: u32,
+        height: u32,
+        source: *mut Bytes,
+        args: *mut Bytes,
+    ) -> *mut ResultBytes {
+        match render_png_inner(width, height, source, args) {
             Ok(data) => into_result_bytes(1, data),
             Err(err) => into_result_bytes(0, err.to_string().into_bytes()),
         }
@@ -51,7 +56,12 @@ mod wasm_impl {
         Box::into_raw(Box::new(ResultBytes { success, len, ptr }))
     }
 
-    fn render_png_inner(source: *mut Bytes, args: *mut Bytes) -> anyhow::Result<Vec<u8>> {
+    fn render_png_inner(
+        width: u32,
+        height: u32,
+        source: *mut Bytes,
+        args: *mut Bytes,
+    ) -> anyhow::Result<Vec<u8>> {
         let source = unsafe { take_bytes(source)? };
         let source = std::str::from_utf8(&source)?;
 
@@ -78,7 +88,7 @@ mod wasm_impl {
             .context("component returned no render node")?;
 
         let layout =
-            seru::layout::build_layout_tree(&node, 500 as usize, 500 as usize, &font_manager)?;
+            seru::layout::build_layout_tree(&node, width as usize, height as usize, &font_manager)?;
 
         let options = RenderOptions {
             output_type: RenderOutputType::PNG,
@@ -89,8 +99,8 @@ mod wasm_impl {
                 a: 0xFF,
             }),
             render_scale: Some(2.0),
-            width: 500.0,
-            height: 500.0,
+            width: width as f32,
+            height: height as f32,
         };
         seru::render::render(&options, &layout, &font_manager)
     }
@@ -114,7 +124,7 @@ mod wasm_impl {
                 .into_iter()
                 .map(|(k, v)| (k, json_to_value(v)))
                 .collect()),
-            _ => anyhow::bail!("expected JSON object"),
+            _ => anyhow::bail!("expected JSON object!!"),
         }
     }
 
