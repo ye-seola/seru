@@ -1,8 +1,11 @@
-use crate::render::{
-    RenderNode, RenderNodeKind,
-    args::Args,
-    context::RenderContext,
-    styles::{CommonStyle, TextStyle},
+use crate::{
+    render::{
+        RenderNode, RenderNodeKind,
+        args::Args,
+        context::RenderContext,
+        styles::{CommonStyle, TextStyle},
+    },
+    runtime::value_to_string,
 };
 
 pub fn text_func(
@@ -14,7 +17,9 @@ pub fn text_func(
     let common_style = CommonStyle::take_from(&mut args)?;
     let text_style = TextStyle::take_from(&mut args)?;
 
-    let text = args.take_required_string("text")?;
+    let text = args.take_required("text")?;
+    let text = value_to_string(text);
+    
     args.finish()?;
 
     Ok(RenderNode {
